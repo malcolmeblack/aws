@@ -3,7 +3,7 @@
 ![diagram](diagram.drawio.png)
 
 **Scenario:**
-Access to an RDS MySQL database is managed using traditional usernames and passwords. Users run MySQL Workbench from their workstations using connection method TCP/IP over SSH. Each user has their own AWS account.
+Access to an RDS MySQL database is managed using traditional usernames and passwords. Users run MySQL Workbench from their workstations using the connection method TCP/IP over SSH. Each user has their own AWS account.
 
 **Problem:**
 The security team wants to stop using password authentication. 

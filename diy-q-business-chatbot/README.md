@@ -7,7 +7,7 @@ You want a RAG chatbot to answer questions about a vast trove of company documen
 **Problem:**
 Q Business [pricing](https://aws.amazon.com/q/business/pricing/) is kind of expensive. 
 - Q Business Lite is \$3 per user/mo.
-- Starter Index is \$0.140 per hour for one unit, or \$102.20 per month.
+- Starter Index is \$0.140 per hour, or \$102.20 per month.
 
 **Solution:**
 Do it yourself!

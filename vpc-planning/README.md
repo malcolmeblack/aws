@@ -4,7 +4,7 @@
 
 Building VPCs and subnets is free and easy, but worth being meticulous about, because they make their appearance every time you build a resource inside of them.
 
-It's worthwhile to be intentional about every detail, including:
+It's worthwhile to be intentional about every detail, in particular:
 - Naming conventions
 - CIDR block partitions
 

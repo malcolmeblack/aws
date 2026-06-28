@@ -1,6 +1,3 @@
-# Sensitive / not-redacted
-AMI/not-redacted/
-
 # Application artifacts
 app/.venv/
 app/data/pdf/

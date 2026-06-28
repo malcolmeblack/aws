@@ -13,6 +13,3 @@ diagram.drawio
 .env
 .env.*
 !.env.example
-
-# Kiro
-.kiro/
