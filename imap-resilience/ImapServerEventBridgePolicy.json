@@ -7,7 +7,7 @@
                 "states:StartExecution"
             ],
             "Resource": [
-                "arn:aws:states:<REGION>:<AWS_ACCOUNT_ID>:stateMachine:imap-server-replace"
+                "arn:aws:states:us-west-2:476322507760:stateMachine:sm-imap-server"
             ]
         }
     ]

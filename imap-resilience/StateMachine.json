@@ -1,0 +1,103 @@
+{
+  "StartAt": "GetElasticIP",
+  "States": {
+
+    "GetElasticIP": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::aws-sdk:ssm:getParameter",
+      "Parameters": {
+        "Name": "/imap-server/eip-id"
+      },
+      "ResultPath": "$.eipAllocationId",
+      "Retry": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "IntervalSeconds": 3,
+          "MaxAttempts": 4,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "ResultPath": "$.error",
+          "Next": "AbandonLifecycle"
+        }
+      ],
+      "Next": "AssociateEIP"
+    },
+
+    "AssociateEIP": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::aws-sdk:ec2:associateAddress",
+      "Parameters": {
+        "AllocationId.$": "$.eipAllocationId.Parameter.Value",
+        "InstanceId.$": "$.detail.EC2InstanceId",
+        "AllowReassociation": true
+      },
+      "ResultPath": "$.eipAssociation",
+      "Retry": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "IntervalSeconds": 3,
+          "MaxAttempts": 4,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "ResultPath": "$.error",
+          "Next": "AbandonLifecycle"
+        }
+      ],
+      "Next": "CompleteLifecycle"
+    },
+
+    "CompleteLifecycle": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::aws-sdk:autoscaling:completeLifecycleAction",
+      "Parameters": {
+        "AutoScalingGroupName.$": "$.detail.AutoScalingGroupName",
+        "LifecycleHookName.$": "$.detail.LifecycleHookName",
+        "LifecycleActionToken.$": "$.detail.LifecycleActionToken",
+        "LifecycleActionResult": "CONTINUE"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "IntervalSeconds": 3,
+          "MaxAttempts": 4,
+          "BackoffRate": 2.0
+        }
+      ],
+      "End": true
+    },
+
+    "AbandonLifecycle": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::aws-sdk:autoscaling:completeLifecycleAction",
+      "Parameters": {
+        "AutoScalingGroupName.$": "$.detail.AutoScalingGroupName",
+        "LifecycleHookName.$": "$.detail.LifecycleHookName",
+        "LifecycleActionToken.$": "$.detail.LifecycleActionToken",
+        "LifecycleActionResult": "ABANDON"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "IntervalSeconds": 3,
+          "MaxAttempts": 4,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Next": "FailExecution"
+    },
+
+    "FailExecution": {
+      "Type": "Fail",
+      "Error": "ImapServerLaunchFailed",
+      "Cause": "Failed to retrieve or associate the Elastic IP for the new IMAP instance. The lifecycle action was ABANDONed so the Auto Scaling group will terminate this instance and launch a replacement."
+    }
+  }
+}
