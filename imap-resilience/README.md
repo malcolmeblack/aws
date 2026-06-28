@@ -113,9 +113,8 @@ aws iam put-role-policy \
 aws stepfunctions create-state-machine \
   --name sm-imap-server \
   --definition file://StateMachine.json \
-  --role-arn arn:aws:iam::476322507760:role/ImapServerStateMachine \
-  --type STANDARD \
-  --region us-west-2
+  --role-arn arn:aws:iam::<AWS_ACCOUNT_ID>:role/ImapServerStateMachine \
+  --type STANDARD
 ```
 
 ### EventBridge
